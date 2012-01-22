@@ -54,7 +54,7 @@ for epoch = epoch:maxepoch
 
         %%% Start positive phase %%%
         data = batchdata(:,:,batch);
-        poshidprobs = 1./(1 + exp(-data*vishid - repmat(hidbiases, numcases, 1)));
+        poshidprobs = sigmoid(data*vishid + repmat(hidbiases, numcases, 1));
         batchposhidprobs(:,:,batch)=poshidprobs;
         posprods = data' * poshidprobs;
 
@@ -65,8 +65,8 @@ for epoch = epoch:maxepoch
         poshidstates = poshidprobs > rand(numcases, numhid);
 
         %%% Start negative phase %%%
-        negdata = sigmoid(-poshidstates*vishid' - repmat(visbiases, numcases, 1));
-        neghidprobs = sigmoid(-negdata*vishid - repmat(hidbiases, numcases, 1));
+        negdata = sigmoid(poshidstates*vishid' + repmat(visbiases, numcases, 1));
+        neghidprobs = sigmoid(negdata*vishid + repmat(hidbiases, numcases, 1));
         negprods  = negdata'*neghidprobs;
         neghidact = sum(neghidprobs);
         negvisact = sum(negdata);
