@@ -7,12 +7,13 @@ close all
 
 maxepoch=50;
 numhid=500; numpen=500; numpen2=2000;
+save params numhid numpen numpen2;
 
 fprintf(1,'Pretraining a deep autoencoder. \n');
 fprintf(1,'The Science paper used 50 epochs. This uses %3i \n', maxepoch);
 
 makebatches;
-[numcases numdims numbatches]=size(batchdata);
+[numcases numdims numbatches] = size(batchdata);
 
 fprintf(1,'Pretraining Layer 1 with RBM: %d-%d \n',numdims,numhid);
 restart=1;
@@ -35,5 +36,3 @@ restart=1;
 rbm;
 hidpen2=vishid; penrecbiases2=hidbiases; hidgenbiases2=visbiases;
 save mnisthp2classify hidpen2 penrecbiases2 hidgenbiases2;
-
-% backpropclassify;
