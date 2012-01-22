@@ -1,0 +1,4 @@
+*.mat
+*-ubyte
+*.swp
+mnist*classify
