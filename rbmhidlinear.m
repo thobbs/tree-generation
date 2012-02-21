@@ -9,9 +9,9 @@
 % restart   -- set to 1 if learning starts from beginning
 colormap(gray(64));
 
-epsilonw  = 0.1;   % Learning rate for weights
-epsilonvb = 0.1;   % Learning rate for biases of visible units
-epsilonhb = 0.1;   % Learning rate for biases of hidden units
+epsilonw  = 0.001;   % Learning rate for weights
+epsilonvb = 0.001;   % Learning rate for biases of visible units
+epsilonhb = 0.001;   % Learning rate for biases of hidden units
 
 weightcost = 0.0002;
 
@@ -55,7 +55,7 @@ for epoch = epoch:maxepoch
 
         %%% Start positive phase %%%
         data = batchdata(:,:,batch);
-        poshidprobs = sigmoid(data*vishid + repmat(hidbiases, numcases, 1));
+        poshidprobs = (data * vishid) + repmat(hidbiases, numcases, 1);
         batchposhidprobs(:,:,batch)=poshidprobs;
         posprods = data' * poshidprobs;
 
@@ -112,11 +112,11 @@ for epoch = epoch:maxepoch
         end
 
         %%% End of positive phase %%%
-        poshidstates = poshidprobs > rand(numcases, numhid);
+        poshidstats = poshidprobs + randn(numcases, numhid);
 
         %%% Start negative phase %%%
         negdata = sigmoid(poshidstates*vishid' + repmat(visbiases, numcases, 1));
-        neghidprobs = sigmoid(negdata*vishid + repmat(hidbiases, numcases, 1));
+        neghidprobs = (negdata * vishid) + repmat(hidbiases, numcases, 1);
         negprods  = negdata'*neghidprobs;
         neghidact = sum(neghidprobs);
         negvisact = sum(negdata);

@@ -2,3 +2,5 @@
 *-ubyte
 *.swp
 mnist*classify
+train
+test

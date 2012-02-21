@@ -9,7 +9,6 @@
 % This program was originally written by Yee Whye Teh
 
 % Work with test files first
-fprintf(1,'You first need to download files:\n train-images-idx3-ubyte.gz\n train-labels-idx1-ubyte.gz\n t10k-images-idx3-ubyte.gz\n t10k-labels-idx1-ubyte.gz\n from http://yann.lecun.com/exdb/mnist/\n and gunzip them \n');
 
 f = fopen('t10k-images-idx3-ubyte','r');
 [a,count] = fread(f,4,'int32');

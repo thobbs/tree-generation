@@ -17,3 +17,9 @@ octave converter.m
 
 echo "Cleaning up"
 rm ./*.ascii
+
+mkdir -f "train"
+mkdir -f "test"
+
+mv digit?.mat train/
+mv test?.mat test/
