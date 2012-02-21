@@ -62,57 +62,8 @@ for epoch = epoch:maxepoch
         poshidact = sum(poshidprobs);
         posvisact = sum(data);
 
-        if mod(batch, 100) == 0 && mod(batch, 200) != 0
-            clf;
-            pixels = [poshidprobs];
-            pixels = [pixels; repmat(ones(1, numhid), 5, 1)];
-            pixels = [pixels; repmat(sigmoid(hidbiases), 10, 1)];
-            pixels = [pixels; repmat(ones(1, numhid), 5, 1)];
-
-            vis1 = visbiases(1:length(visbiases)/2);
-            vis1 = repmat([sigmoid(vis1) ones(1, numhid - length(vis1))], 10, 1);
-
-            vis2 = visbiases((length(visbiases)/2)+1:length(visbiases));
-            vis2 = repmat([sigmoid(vis2) ones(1, numhid - length(vis2))], 10, 1);
-
-            pixels = [pixels; vis1];
-            pixels = [pixels; vis2];
-            pixels = uint8(round(pixels .* 64));
-            imagesc(pixels);
-
-            axis image off
-            drawnow;
-        end
-
-        if numdims == (28*28) && mod(batch, 200) == 0
-            rows = [];
-            row = [];
-            for i = 1:numhid;
-                w_i = vishid(:,i);
-                w_i = sigmoid(w_i);
-                w_i = reshape(w_i, 28, 28)';
-                row = [row, w_i];
-                if mod(i, 30) == 0
-                    rows = [rows; row];
-                    row = [];
-                end
-            end
-
-            if length(row) > 0
-                numentries = length(row)/28;
-                for i = 1:(30 - numentries)
-                    row = [row, zeros(28, 28)];
-                end
-                rows = [rows; row];
-            end
-
-            imshow(rows, [0.0 1.0]);
-            axis image off
-            drawnow;
-        end
-
         %%% End of positive phase %%%
-        poshidstats = poshidprobs + randn(numcases, numhid);
+        poshidstates = poshidprobs + randn(numcases, numhid);
 
         %%% Start negative phase %%%
         negdata = sigmoid(poshidstates*vishid' + repmat(visbiases, numcases, 1));

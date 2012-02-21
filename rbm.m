@@ -50,7 +50,8 @@ for epoch = epoch:maxepoch
     fprintf(1, 'epoch %d\r', epoch);
     errsum=0;
 
-    for batch = 1:numbatches
+    for batch = 1:20
+    %for batch = 1:numbatches
         fprintf(1, 'epoch %d batch %d\r', epoch, batch);
 
         %%% Start positive phase %%%

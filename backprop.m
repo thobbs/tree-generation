@@ -51,14 +51,14 @@ for epoch = 1:maxepoch
         data = [batchdata(:,:,batch)];
         data = [data ones(N,1)];
 
-        w1probs = sigmoid(data*w1);     w1probs = [w1probs ones(N,1)];
-        w2probs = sigmoid(w1probs*w2)); w2probs = [w2probs ones(N,1)];
-        w3probs = sigmoid(w2probs*w3)); w3probs = [w3probs ones(N,1)];
-        w4probs = w3probs*w4;           w4probs = [w4probs ones(N,1)];
-        w5probs = sigmoid(w4probs*w5)); w5probs = [w5probs ones(N,1)];
-        w6probs = sigmoid(w5probs*w6)); w6probs = [w6probs ones(N,1)];
-        w7probs = sigmoid(w6probs*w7)); w7probs = [w7probs ones(N,1)];
-        dataout = sigmoid(w7probs*w8));
+        w1probs = sigmoid(data*w1);    w1probs = [w1probs ones(N,1)];
+        w2probs = sigmoid(w1probs*w2); w2probs = [w2probs ones(N,1)];
+        w3probs = sigmoid(w2probs*w3); w3probs = [w3probs ones(N,1)];
+        w4probs = w3probs*w4;          w4probs = [w4probs ones(N,1)];
+        w5probs = sigmoid(w4probs*w5); w5probs = [w5probs ones(N,1)];
+        w6probs = sigmoid(w5probs*w6); w6probs = [w6probs ones(N,1)];
+        w7probs = sigmoid(w6probs*w7); w7probs = [w7probs ones(N,1)];
+        dataout = sigmoid(w7probs*w8);
 
         err += (1/N) * sum(sum( (data(:,1:end-1)-dataout).^2 ));
     end
@@ -90,14 +90,14 @@ for epoch = 1:maxepoch
         data = [testbatchdata(:,:,batch)];
         data = [data ones(N,1)];
 
-        w1probs = sigmoid(data*w1));    w1probs = [w1probs ones(N,1)];
-        w2probs = sigmoid(w1probs*w2)); w2probs = [w2probs ones(N,1)];
-        w3probs = sigmoid(w2probs*w3)); w3probs = [w3probs ones(N,1)];
-        w4probs = w3probs*w4;           w4probs = [w4probs ones(N,1)];
-        w5probs = sigmoid(w4probs*w5)); w5probs = [w5probs ones(N,1)];
-        w6probs = sigmoid(w5probs*w6)); w6probs = [w6probs ones(N,1)];
-        w7probs = sigmoid(w6probs*w7)); w7probs = [w7probs ones(N,1)];
-        dataout = sigmoid(w7probs*w8));
+        w1probs = sigmoid(data*w1);    w1probs = [w1probs ones(N,1)];
+        w2probs = sigmoid(w1probs*w2); w2probs = [w2probs ones(N,1)];
+        w3probs = sigmoid(w2probs*w3); w3probs = [w3probs ones(N,1)];
+        w4probs = w3probs*w4;          w4probs = [w4probs ones(N,1)];
+        w5probs = sigmoid(w4probs*w5); w5probs = [w5probs ones(N,1)];
+        w6probs = sigmoid(w5probs*w6); w6probs = [w6probs ones(N,1)];
+        w7probs = sigmoid(w6probs*w7); w7probs = [w7probs ones(N,1)];
+        dataout = sigmoid(w7probs*w8);
 
         err += (1/N) * sum(sum( (data(:,1:end-1)-dataout).^2 ));
     end
@@ -106,17 +106,18 @@ for epoch = 1:maxepoch
             epoch, train_err(epoch), test_err(epoch));
 
 
-    big_batch_num = 0;
+    tt = 0;
     for batch = 1:numbatches/10
 
         fprintf(1,'epoch %d batch %d\r',epoch,batch);
 
         % Combine 10 minibatches into 1 larger minibatch
+        tt = tt+1;
         data=[];
-        for small_batch_num = 1:10
-           data=[data batchdata(:,:, big_batch_num*10 + small_batch_num)];
+        for kk=1:10
+           data=[data
+                 batchdata(:,:, (tt-1)*10 + kk)];
         end
-        big_batch_num += 1;
 
         % Perform conjugate gradient with 3 linesearches
         max_iter = 3;
