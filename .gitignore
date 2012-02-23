@@ -4,3 +4,11 @@
 mnist*classify
 train
 test
+
+mnist_error
+mnist_weights
+mnisthp
+mnisthp2
+mnistpo
+mnistvh
+params
