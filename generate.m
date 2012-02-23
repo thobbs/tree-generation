@@ -1,76 +1,24 @@
 % Generate samples from the model
 colormap(gray(64));
 
-load mnistvhclassify;
-load mnisthpclassify;
-load mnisthp2classify;
-% load params;
-numhid=500; numpen=500; numpen2=2000;
+load mnist_weights;
+load params;
+% numhid=1000; numpen=500; numpen2=250; numopen=30;
 
-% final hidden:  hidpen2 penrecbiases2 hidgenbiases2
-% second hidden: hidpen  penrecbiases  hidgenbiases
-% first hidden:  vishid  hidrecbiases  visbiases
+fourth_rec = w4(1:size(w4,1) - 1, :);
+fourth_rec_bias = w4(size(w4,1),:);
 
-size(hidpen2)
-size(hidpen)
-size(vishid)
+fourth_gen = w5(1:size(w5,1) - 1, :);
+fourth_gen_bias = w5(size(w5,1),:);
 
-rows = [];
-row = [];
-for i = 1:numpen;
-    w_i = (hidpen(:,i)') * vishid';
-    w_i = sigmoid(w_i + visbiases);
-    w_i = reshape(w_i, 28, 28)';
-    row = [row, w_i];
-    if mod(i, 30) == 0
-        rows = [rows; row];
-        row = [];
-    end
-end
+third = w6(1:size(w6,1) - 1, :);
+third_bias = w6(size(w6,1),:);
 
-if length(row) > 0
-    numentries = length(row)/28;
-    for i = 1:(30 - numentries)
-        row = [row, zeros(28, 28)];
-    end
-    rows = [rows; row];
-end
+second = w7(1:size(w7,1) - 1, :);
+second_bias = w7(size(w7,1),:);
 
-imshow(rows, [0.0 1.0]);
-axis image off
-drawnow;
-pause;
-
-size(hidgenbiases2)
-size(hidgenbiases)
-
-rows = [];
-row = [];
-for i = 1:numpen2;
-    foos = hidpen2(:,i)' * hidpen';
-    foos = sigmoid(foos);
-    w_i = foos * vishid';
-    w_i = sigmoid(w_i + visbiases);
-    w_i = reshape(w_i, 28, 28)';
-    row = [row, w_i];
-    if mod(i, 60) == 0
-        rows = [rows; row];
-        row = [];
-    end
-end
-
-if length(row) > 0
-    numentries = length(row)/28;
-    for i = 1:(60 - numentries)
-        row = [row, zeros(28, 28)];
-    end
-    rows = [rows; row];
-end
-
-imshow(rows, [0.0 1.0]);
-axis image off
-drawnow;
-pause;
+first = w8(1:size(w8,1) - 1, :);
+first_bias = w8(size(w8,1),:);
 
 numsamples = 1; % how many sample images to generate
 numdims = 784;
@@ -80,32 +28,30 @@ for s = 1:numsamples
     fprintf(1, 'Generating sample %3i... \n', s);
 
     % Start from random final units
-    pen2states = rand(numpen2, 1)' - 0.5;
-    pen2states = pen2states > rand(size(pen2states));
+    fourth_states = rand(numopen, 1)';
 
-    % Run Gibbs sampling for 500 iterations
-    for i = 1:500
-        penstates = sigmoid(pen2states*hidpen2' + hidgenbiases2);
+    % Run Gibbs sampling for many iterations
+    for i = 1:200
+        third_states = sigmoid(fourth_states*fourth_gen + fourth_gen_bias);
+        third_states = third_states > rand(size(third_states));
 
-        pen2states = sigmoid(penstates*hidpen2 + penrecbiases2);
-        pen2states = pen2states > rand(size(pen2states));
+        fourth_states = third_states*fourth_rec + fourth_rec_bias;
 
-        fprintf(1, 'pen2states: %d\n', length(pen2states(pen2states == 1)));
-        penstates = penstates > rand(size(penstates));
-        fprintf(1, 'penstates: %d\n', length(penstates(penstates == 1)));
-
-        if mod(i, 100) == 0
+        if mod(i, 20) == 0
             % Go back down
-            hidstates = sigmoid(penstates*hidpen + hidgenbiases);
-            %hidstates = hidstates > rand(size(hidstates));
-            %fprintf(1, 'hidstates: %d\n', length(hidstates(hidstates == 1)));
+            third_states = sigmoid(fourth_states*fourth_gen + fourth_gen_bias);
+            third_states = third_states > rand(size(third_states));
 
-            visstates = sigmoid(hidstates*vishid' + visbiases);
-            %visstates = visstates > rand(size(visstates));
-            %fprintf(1, 'visstates: %d\n', length(visstates(visstates == 1)));
+            second_states = sigmoid(third_states*third + third_bias);
+            second_states = second_states > rand(size(second_states));
+
+            first_states = sigmoid(second_states*second + second_bias);
+            first_states = first_states > rand(size(first_states));
+
+            visible = sigmoid(first_states*first + first_bias);
 
             % Convert the visible states into an image
-            pixels = uint8(round(visstates .* 64));
+            pixels = uint8(round(visible .* 64));
             pixels = reshape(pixels, 28, 28)';
 
             clf;
